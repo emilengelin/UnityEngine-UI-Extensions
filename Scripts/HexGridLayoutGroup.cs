@@ -29,7 +29,7 @@ namespace UI
         /// Scale of the cells.
         /// </summary>
         [Tooltip("Scale of the cells.")]
-            public float cellScale = 100;
+            public float cellScale = 1;
         /// <summary>
         /// Offset for the entire grid
         /// </summary>
@@ -65,7 +65,7 @@ namespace UI
         /// </summary>
         [Space]
         [Tooltip("WARNING: May take extra processing power. NOTE: A bit buggy aswell.")]
-            public bool resetPostionsOnBuild = false;
+            public bool resetPositionsOnBuild = false;
 
         /// <summary>
         /// When should the grid be built?
@@ -153,6 +153,9 @@ namespace UI
 
         #region Public methods
 
+        /// <summary>
+        /// Use this if you're building from your own code.
+        /// </summary>
         public void BuildAutomatic()
         {
             ClampValues();
@@ -169,7 +172,7 @@ namespace UI
 
         public void BuildSquare()
         {
-            if (resetPostionsOnBuild)
+            if (resetPositionsOnBuild)
             {
                 ResetAllPositions();
             }
@@ -194,7 +197,7 @@ namespace UI
             {
                 foreach (RectTransform rt in transform)
                 {
-                    rt.sizeDelta = Vector3.one * cellScale;
+                    rt.localScale = Vector3.one * cellScale;
 
                     SetAnchor(rt, anchor);
 
@@ -241,7 +244,7 @@ namespace UI
                         {
                             x++;
                         }
-
+                        
                         y = Mathf.RoundToInt(Mathf.Repeat(y + 1, columnCount));
                     }
                 }
@@ -295,7 +298,7 @@ namespace UI
                         {
                             x++;
                         }
-
+                        
                         y = Mathf.RoundToInt(Mathf.Repeat(y + 1, columnCount));
                     }
                 }
@@ -304,7 +307,7 @@ namespace UI
 
         public void BuildSpiral()
         {
-            if (resetPostionsOnBuild)
+            if (resetPositionsOnBuild)
             {
                 ResetAllPositions();
             }
@@ -349,7 +352,7 @@ namespace UI
                         break;
                     }
 
-                    rt.sizeDelta = Vector3.one * cellScale;
+                    rt.localScale = Vector3.one * cellScale;
 
                     SetAnchor(rt, anchor);
 
@@ -425,7 +428,7 @@ namespace UI
 
         private void OnTransformChildrenChanged()
         {
-            if (buildSetup != BuildSetupHexGrid.OnValidate)
+            if (buildSetup == BuildSetupHexGrid.OnTransformChildrenChanged || buildSetup == BuildSetupHexGrid.Both)
             {
                 BuildAutomatic();
             }
@@ -433,7 +436,7 @@ namespace UI
 
         private void OnValidate()
         {
-            if (buildSetup != BuildSetupHexGrid.OnTransformChildrenChanged)
+            if (buildSetup == BuildSetupHexGrid.OnValidate || buildSetup == BuildSetupHexGrid.Both)
             {
                 BuildAutomatic();
             }
@@ -605,7 +608,8 @@ namespace UI
         {
             OnTransformChildrenChanged,
             OnValidate,
-            Both
+            Both,
+            Never
         }
 
         /// <summary>
